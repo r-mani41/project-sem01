@@ -1,0 +1,6 @@
+create <table_name> <col_name>=<col_type>,<col_name>=<col_type>,...
+insert <table_name> <col_name>=<col_data>,<col_name>=<col_data>,...
+insert <table_name> <col_name>=<col_data>,<col_name>=<col_data> <col_name>=<col_data>,<col_name>=<col_data> 
+select <table_name> <col_name>,<col_name> <where> <col_name>exp<data> & <col_name>exp<data>
+exp = < > <= >= !=
+
