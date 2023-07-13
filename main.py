@@ -1,9 +1,9 @@
 from texttable import Texttable
+
 tablespace = {}
 
+
 # function to create table
-
-
 def create_table(table_name, attributes):
     # checking if table already exists
     if table_name in tablespace:
@@ -17,13 +17,14 @@ def create_table(table_name, attributes):
     table = tablespace[table_name]
     # setting up the column and its datatype for the table
     for column in attributes.split(","):
-        col_name, col_datatype = column.split('=')
+        col_name, col_datatype = column.split("=")
         table["schema"][col_name] = col_datatype
 
     print("\n {} table created \n".format(table_name))
     return
 
 
+# function to insert row to table
 def insert_table(table_name, row_data, row_count):
     # checking if table exists
     if table_name not in tablespace:
@@ -34,12 +35,15 @@ def insert_table(table_name, row_data, row_count):
         row = {}
         col_data = row_data[index].split(",")
         for data in col_data:
-            col_name, col_value = data.split('=')
+            col_name, col_value = data.split("=")
 
             # checking if column exists in table
             if col_name not in tablespace[table_name]["schema"]:
-                print("column name {} does not exits in table {} \n".format(
-                    col_name, table_name))
+                print(
+                    "column name {} does not exits in table {} \n".format(
+                        col_name, table_name
+                    )
+                )
                 return
 
             # checking if datatype matches against table column schema
@@ -49,13 +53,18 @@ def insert_table(table_name, row_data, row_count):
                 flag = True
             elif datatype == "char" and len(col_value) > 1:
                 flag = True
-            elif datatype == "bool" and not (col_value == "true" or col_value == "false"):
+            elif datatype == "bool" and not (
+                col_value == "true" or col_value == "false"
+            ):
                 flag = True
 
             # checking if datatype error
             if flag:
-                print("datatype for column {} is {}, please check the column value".format(
-                    col_name, datatype))
+                print(
+                    "datatype for column {} is {}, please check the column value".format(
+                        col_name, datatype
+                    )
+                )
                 return
 
             row[col_name] = col_value
@@ -67,13 +76,14 @@ def insert_table(table_name, row_data, row_count):
     return
 
 
+# function to select rows from table
 def select_table(table_name, column, exp=None, log_op=None):
     t = Texttable()
     exp_len = len(exp)
     log_op_len = len(log_op)
     column = column.split(",")
     # if * select all columns else choose user specified columns
-    if column[0] == '*':
+    if column[0] == "*":
         col_header = tablespace[table_name]["schema"].keys()
     else:
         col_header = column
@@ -84,12 +94,12 @@ def select_table(table_name, column, exp=None, log_op=None):
 
     for row in total_rows:
         qualified_row = eval_row(row, exp, log_op, exp_len, log_op_len)
-        #print("qualified", qualified_row)
+        # print("qualified", qualified_row)
         if qualified_row:
             record = row.items()
             temp = []
             for col in record:
-                if col[0] in column or column[0] == '*':
+                if col[0] in column or column[0] == "*":
                     temp.append(col[1])
             t.add_row(temp)
 
@@ -99,7 +109,7 @@ def select_table(table_name, column, exp=None, log_op=None):
 
 
 def eval_row(row_record, exp, log_op, exp_len, log_op_len):
-    #print("eval_row", row_record, exp, log_op, exp_len, log_op_len)
+    # print("eval_row", row_record, exp, log_op, exp_len, log_op_len)
     if exp_len == 1:
         return extract_conditional_operator(exp[0], row_record)
 
@@ -122,11 +132,11 @@ def eval_row(row_record, exp, log_op, exp_len, log_op_len):
 
 
 def eval_expression(exp_1, exp_2, log_op):
-    #print("eval expression", exp_1, exp_2, log_op)
-    if log_op == '&':
+    # print("eval expression", exp_1, exp_2, log_op)
+    if log_op == "&":
         if exp_1 and exp_2:
             return True
-    elif log_op == '|':
+    elif log_op == "|":
         if exp_1 or exp_2:
             return True
 
@@ -134,7 +144,6 @@ def eval_expression(exp_1, exp_2, log_op):
 
 
 def extract_conditional_operator(exp, row_record):
-
     if ">=" in exp:
         cond_exp = ">="
         cond_col, cond_val = exp.split(">=")
@@ -162,25 +171,25 @@ def extract_conditional_operator(exp, row_record):
 
 
 def check_expression(cond_val, col_val, cond):
-    #print("Inside Check Expression", cond_val, col_val, cond)
-    if cond == '=' and col_val == cond_val:
+    # print("Inside Check Expression", cond_val, col_val, cond)
+    if cond == "=" and col_val == cond_val:
         return True
-    elif cond == '>' and col_val > cond_val:
+    elif cond == ">" and col_val > cond_val:
         return True
-    elif cond == '<' and col_val < cond_val:
+    elif cond == "<" and col_val < cond_val:
         return True
-    elif cond == '>=' and col_val >= cond_val:
+    elif cond == ">=" and col_val >= cond_val:
         return True
-    elif cond == '<=' and col_val <= cond_val:
+    elif cond == "<=" and col_val <= cond_val:
         return True
-    elif cond == '!=' and col_val != cond_val:
+    elif cond == "!=" and col_val != cond_val:
         return True
 
     return False
 
 
 if __name__ == "__main__":
-    while(True):
+    while True:
         user_string = input(" query >> ")
         query = user_string.split(" ")
         keyword = query[0]
